@@ -16,7 +16,7 @@ import "@mantine/dropzone/styles.css";
 import '@mantine/dates/styles.css';
 import "@mantine/charts/styles.css";
 import "./styles/global.scss";
-import {isSsr} from "./utilites/helpers.ts";
+
 import {StartupChecks} from "./StartupChecks.tsx";
 import {ThirdPartyScripts} from "./components/common/ThirdPartyScripts";
 import {getConfig} from "./utilites/config.ts";
@@ -38,8 +38,7 @@ export const App: FC<
     }>
 > = (props) => {
     const [isLoadedOnBrowser, setIsLoadedOnBrowser] = React.useState(false);
-    const showGlobalConsentBanner = getConfig('VITE_COOKIE_CONSENT_ENABLED') === 'true'
-        && !isSsr() && isConsentPending();
+    const [showGlobalConsentBanner, setShowGlobalConsentBanner] = React.useState(false);
 
     const handleGlobalConsent = useCallback((granted: boolean) => {
         setConsentState(granted ? 'granted' : 'denied');
@@ -48,7 +47,11 @@ export const App: FC<
     }, []);
 
     useEffect(() => {
-        setIsLoadedOnBrowser(!isSsr());
+        setIsLoadedOnBrowser(true);
+        // Evaluate consent banner only on client after hydration to avoid SSR mismatch
+        setShowGlobalConsentBanner(
+            getConfig('VITE_COOKIE_CONSENT_ENABLED') === 'true' && isConsentPending()
+        );
     }, []);
 
     return (
@@ -73,8 +76,14 @@ export const App: FC<
             <MantineProvider
                 theme={{
                     colors: {
-                        primary: generateColors(getConfig("VITE_APP_PRIMARY_COLOR", "#40296C") as string),
-                        secondary: generateColors(getConfig("VITE_APP_SECONDARY_COLOR", "#3d0b44") as string),
+                        // Use stable fallback values during SSR/hydration to avoid React #418.
+                        // Runtime env values are applied after hydration settles (isLoadedOnBrowser).
+                        primary: generateColors(isLoadedOnBrowser
+                            ? (getConfig("VITE_APP_PRIMARY_COLOR", "#40296C") as string)
+                            : "#40296C"),
+                        secondary: generateColors(isLoadedOnBrowser
+                            ? (getConfig("VITE_APP_SECONDARY_COLOR", "#3d0b44") as string)
+                            : "#3d0b44"),
                     },
                     primaryColor: "primary",
                     fontFamily: "Outfit, sans-serif",
