@@ -137,7 +137,7 @@ Sitemap: ${frontendUrl}/sitemap.xml
     });
 
     app.listen(port, '0.0.0.0', () => {
-        console.info(`SSR Serving at 0.0.0.0:${port}`);
+        console.info(`SSR Serving at http://0.0.0.0:${port}`);
     });
 
     const dynamicImport = async (path) => {
