@@ -1,17 +1,17 @@
 import express from "express";
-import {installGlobals} from "@remix-run/node";
+import { installGlobals } from "@remix-run/node";
 import process from "process";
-import {createServer as viteServer} from "vite";
+import { createServer as viteServer } from "vite";
 import compression from "compression";
 import fs from "node:fs/promises";
 import sirv from "sirv";
 import cookieParser from "cookie-parser";
 import path from "node:path";
-import {fileURLToPath} from "node:url";
+import { fileURLToPath } from "node:url";
 import * as nodePath from "node:path";
 import * as nodeUrl from "node:url";
 import "dotenv/config";
-import {sitemapIndexHandler, sitemapEventsHandler, sitemapOrganizersHandler} from "./src/sitemap/proxy.js";
+import { sitemapIndexHandler, sitemapEventsHandler, sitemapOrganizersHandler } from "./src/sitemap/proxy.js";
 
 installGlobals();
 
@@ -137,14 +137,14 @@ Sitemap: ${frontendUrl}/sitemap.xml
     });
 
     app.listen(port, '0.0.0.0', () => {
-        console.info(`SSR Serving at http://0.0.0.0:${port}`);
+        console.info(`SSR Serving at 0.0.0.0:${port}`);
     });
 
     const dynamicImport = async (path) => {
         return import(
             nodePath.isAbsolute(path) ? nodeUrl.pathToFileURL(path).toString() : path
         );
-        
+
     }
 }
 main();
