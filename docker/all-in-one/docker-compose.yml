@@ -1,5 +1,5 @@
 services:
-  h1.events-all-in-one:
+  events-all-in-one:
     build:
       context: ./../../
       dockerfile: Dockerfile.all-in-one
